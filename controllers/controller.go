@@ -56,107 +56,162 @@ const chunkSize = 100000
 
 
 
+// func EstimateGas() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		var ctx, cancel = context.WithTimeout(context.Background(), 200*time.Second)
+// 		defer cancel()
+
+// 		fmt.Println("11111111111111111")
+// 		client, err := ethclient.Dial("https://ethereum-holesky-rpc.publicnode.com")
+// 		if err != nil {
+// 			log.Printf("Failed to connect to the Ethereum client: %v\n", err)
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the Ethereum client"})
+// 			return
+// 		}
+// 		fmt.Println("2222222222222222222")
+
+// 		// Parse request body
+// 		var requestBody struct {
+// 			Message       string `json:"Message" binding:"required"`
+// 			WalletAddress string `json:"WalletAddress" binding:"required"`
+// 		}
+// 		if err := c.ShouldBindJSON(&requestBody); err != nil {
+// 			log.Printf("Invalid request payload: %v\n", err)
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+// 			return
+// 		}
+// 		fmt.Println("333333333333333333", requestBody)
+
+
+
+// 		// toAddress := common.HexToAddress(addresses[0])
+// 		toAddress := common.HexToAddress(requestBody.WalletAddress)
+
+// 		// fmt.Println("88888888888888888888888888888")
+
+// 		// Convert message to hex
+// 		data := []byte(requestBody.Message)
+// 		fmt.Println("9999999999999999", data)
+
+// 		// Prepare the transaction
+// 		fromAddress := common.HexToAddress(requestBody.WalletAddress)
+// 		msg := ethereum.CallMsg{
+// 			From: fromAddress,
+// 			To:   &toAddress,
+// 			Data: data,
+// 		}
+// 		fmt.Println("10101010101010101010101", msg)
+
+// 		// Estimate the gas required for the transaction
+// 		gasLimit, err := client.EstimateGas(ctx, msg)
+// 		if err != nil {
+// 			log.Printf("Failed to estimate gas: %v\n", err)
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to estimate gas", "details": err.Error()})
+// 			return
+// 		}
+// 		fmt.Println("1011101110110101010110101011111110000011111111")
+
+// 		// Get the current gas price
+// 		gasPrice, err := client.SuggestGasPrice(ctx)
+// 		if err != nil {
+// 			log.Printf("Failed to get gas price: %v\n", err)
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get gas price", "details": err.Error()})
+// 			return
+// 		}
+// 		fmt.Println("12121212121212121212121212")
+
+// 		// Calculate the total gas cost
+// 		totalGasCost := new(big.Int).Mul(gasPrice, big.NewInt(int64(gasLimit)))
+
+// 		// Calculate the total cost for the number of addresses
+// 		numAddresses := 1000000
+// 		totalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(numAddresses)))
+// 		// Step 2: Create a big integer representing 10^18
+// 		divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+
+// 		// Convert to big.Float for precise division
+// 	totalCostFloat := new(big.Float).SetInt(totalCost)
+// 	divisorFloat := new(big.Float).SetInt(divisor)
+
+// 	// Step 3: Perform the division with big.Float
+// 	finalCostFloat := new(big.Float).Quo(totalCostFloat, divisorFloat)
+
+// 	// Set precision to 4 decimal places
+// 	finalCostFloat = finalCostFloat.SetPrec(4 * 8) // 4 decimal places
+
+// 	// Convert the result to a string with 4 decimal places
+// 	finalCostString := fmt.Sprintf("%.4f", finalCostFloat)
+// 		// finalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(numAddresses)))
+// 		fmt.Println("totalCost",totalCost,"divisor",divisor,"finalCost",finalCostString)
+
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"gasLimit":     gasLimit,
+// 			"gasPrice":     gasPrice.String(),
+// 			"totalGasCost": totalGasCost.String(),
+// 			"totalCost":    totalCost.String(),
+// 			"numAddresses": numAddresses,
+// 			"finalCost":	finalCostString,
+// 		})
+// 	}
+// }
+
+
 func EstimateGas() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 200*time.Second)
 		defer cancel()
-
-		fmt.Println("11111111111111111")
+		fmt.Println("11111111111111111111")
 		client, err := ethclient.Dial("https://ethereum-holesky-rpc.publicnode.com")
 		if err != nil {
 			log.Printf("Failed to connect to the Ethereum client: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the Ethereum client"})
 			return
 		}
-		fmt.Println("2222222222222222222")
+		fmt.Println("22222222222222222222222")
+
 
 		// Parse request body
 		var requestBody struct {
-			Message       string `json:"Message" binding:"required"`
-			WalletAddress string `json:"WalletAddress" binding:"required"`
+			OrderID       float64 `json:"order_id" binding:"required"`
+			Message       string  `json:"Message" binding:"required"`
+			WalletAddress string  `json:"WalletAddress" binding:"required"`
 		}
 		if err := c.ShouldBindJSON(&requestBody); err != nil {
 			log.Printf("Invalid request payload: %v\n", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 			return
 		}
-		fmt.Println("333333333333333333", requestBody)
+		fmt.Println("3333333333333333333")
 
-		// Retrieve the uploaded file
-		// file, err := c.FormFile("file")
-		// if err != nil {
-		// 	log.Printf("File upload failed: %v\n", err)
-		// 	c.JSON(http.StatusBadRequest, gin.H{"error": "File upload failed"})
-		// 	return
-		// }
-		// fmt.Println("44444444444444444444444")
 
-		// // Open the uploaded file
-		// f, err := file.Open()
-		// if err != nil {
-		// 	log.Printf("Failed to open uploaded file: %v\n", err)
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open uploaded file"})
-		// 	return
-		// }
-		// defer f.Close()
-		// fmt.Println("5555555555555555555555555555")
+	
 
-		// // Read the Excel file
-		// excelFile, err := excelize.OpenReader(f)
-		// if err != nil {
-		// 	log.Printf("Failed to read Excel file: %v\n", err)
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read Excel file"})
-		// 	return
-		// }
-		// fmt.Println("6666666666666666666666666666")
+		orderCollection := database.OpenCollection(database.Client, "orders")
+		fmt.Println("4444444444444444444444444")
 
-		// // Get the address from the first cell in the first sheet
-		// sheetName := excelFile.GetSheetName(0)
-		// // Iterate through the rows in the first column to count addresses
-		// rows, err := excelFile.Rows(sheetName)
-		// if err != nil {
-		// 	log.Printf("Failed to read rows from Excel file: %v\n", err)
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read rows from Excel file"})
-		// 	return
-		// }
+		var order models.Order
+		filter := bson.M{"order_id": requestBody.OrderID}
+		update := bson.M{"$set": bson.M{"message": requestBody.Message}}
 
-		// var addresses []string
-		// for rows.Next() {
-		// 	row, err := rows.Columns()
-		// 	if err != nil {
-		// 		log.Printf("Failed to read row from Excel file: %v\n", err)
-		// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read row from Excel file"})
-		// 		return
-		// 	}
-		// 	if len(row) > 0 && row[0] != "" {
-		// 		addresses = append(addresses, row[0])
-		// 	}
-		// }
-
-		// if len(addresses) == 0 {
-		// 	log.Println("No addresses found in the first column of the Excel file")
-		// 	c.JSON(http.StatusBadRequest, gin.H{"error": "No addresses found in the first column of the Excel file"})
-		// 	return
-		// }
-		// fmt.Println("777777777777777777777")
-
-		// toAddress := common.HexToAddress(addresses[0])
-		toAddress := common.HexToAddress(requestBody.WalletAddress)
-
-		// fmt.Println("88888888888888888888888888888")
-
-		// Convert message to hex
-		data := []byte(requestBody.Message)
-		fmt.Println("9999999999999999", data)
+		err = orderCollection.FindOneAndUpdate(ctx, filter, update).Decode(&order)
+		if err != nil {
+			log.Printf("Failed to find and update order: %v\n", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find and update order"})
+			return
+		}
+		fmt.Println("55555555555555555555555")
 
 		// Prepare the transaction
+		toAddress := common.HexToAddress(requestBody.WalletAddress)
+		data := []byte(requestBody.Message)
 		fromAddress := common.HexToAddress(requestBody.WalletAddress)
 		msg := ethereum.CallMsg{
 			From: fromAddress,
 			To:   &toAddress,
 			Data: data,
 		}
-		fmt.Println("10101010101010101010101", msg)
+		fmt.Println("6666666666666666666666666")
+
 
 		// Estimate the gas required for the transaction
 		gasLimit, err := client.EstimateGas(ctx, msg)
@@ -165,7 +220,8 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to estimate gas", "details": err.Error()})
 			return
 		}
-		fmt.Println("1011101110110101010110101011111110000011111111")
+		fmt.Println("77777777777777777777777777777777")
+
 
 		// Get the current gas price
 		gasPrice, err := client.SuggestGasPrice(ctx)
@@ -174,42 +230,34 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get gas price", "details": err.Error()})
 			return
 		}
-		fmt.Println("12121212121212121212121212")
+		fmt.Println("888888888888888888888888888888")
+
 
 		// Calculate the total gas cost
 		totalGasCost := new(big.Int).Mul(gasPrice, big.NewInt(int64(gasLimit)))
 
-		// Calculate the total cost for the number of addresses
-		numAddresses := 1000000
-		totalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(numAddresses)))
-		// Step 2: Create a big integer representing 10^18
+		// Multiply the total gas cost by the count value from the order
+		totalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(order.Count)))
+
+		// Convert the total cost to Ether
 		divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+		totalCostFloat := new(big.Float).SetInt(totalCost)
+		divisorFloat := new(big.Float).SetInt(divisor)
+		finalCostFloat := new(big.Float).Quo(totalCostFloat, divisorFloat)
+		finalCostString := fmt.Sprintf("%.4f", finalCostFloat)
 
-		// Convert to big.Float for precise division
-	totalCostFloat := new(big.Float).SetInt(totalCost)
-	divisorFloat := new(big.Float).SetInt(divisor)
+			// finalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(numAddresses)))
+			fmt.Println("totalCost",totalCost,"divisor",divisor,"finalCost",finalCostString)
 
-	// Step 3: Perform the division with big.Float
-	finalCostFloat := new(big.Float).Quo(totalCostFloat, divisorFloat)
-
-	// Set precision to 4 decimal places
-	finalCostFloat = finalCostFloat.SetPrec(4 * 8) // 4 decimal places
-
-	// Convert the result to a string with 4 decimal places
-	finalCostString := fmt.Sprintf("%.4f", finalCostFloat)
-		// finalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(numAddresses)))
-		fmt.Println("totalCost",totalCost,"divisor",divisor,"finalCost",finalCostString)
-
-		c.JSON(http.StatusOK, gin.H{
-			"gasLimit":     gasLimit,
-			"gasPrice":     gasPrice.String(),
-			"totalGasCost": totalGasCost.String(),
-			"totalCost":    totalCost.String(),
-			"numAddresses": numAddresses,
-			"finalCost":	finalCostString,
-		})
+			c.JSON(http.StatusOK, gin.H{
+				"gasLimit":     gasLimit,
+				"gasPrice":     gasPrice.String(),
+				"totalGasCost": totalGasCost.String(),
+				"totalCost":    totalCost.String(),
+				"finalCost":	finalCostString,
+			})
+		}
 	}
-}
 
 func SignIn() gin.HandlerFunc {
 	return func(c *gin.Context) {

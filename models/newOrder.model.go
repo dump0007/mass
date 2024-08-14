@@ -20,6 +20,7 @@ type Order struct {
 	Count         	int            `json:"count" bson:"count"`
 	FileName		string			   `json:"file_name" bson:"file_name" validate:"required"`
 	Ipfs			string			   `json:"ipfs" bson:"ipfs"`
+	Message			string			   `json:"message" bson:"message"`
 	PrivateKey		string			   `json:"pvt_key" bson:"pvt_key"`
 	Addresses       []Transaction      `json:"addresses" bson:"addresses"`
 	CreatedAt       time.Time          `json:"created_at" bson:"created_at"`
