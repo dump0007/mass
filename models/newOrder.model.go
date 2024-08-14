@@ -17,6 +17,7 @@ type Order struct {
 	GasCollected    float64            `json:"gas_collected" bson:"gas_collected"`
 	GasUsed         float64            `json:"gas_used" bson:"gas_used"`
 	Nonce         	float64            `json:"nonce" bson:"nonce"`
+	Count         	int            `json:"count" bson:"count"`
 	FileName		string			   `json:"file_name" bson:"file_name" validate:"required"`
 	Ipfs			string			   `json:"ipfs" bson:"ipfs"`
 	PrivateKey		string			   `json:"pvt_key" bson:"pvt_key"`

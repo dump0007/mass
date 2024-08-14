@@ -21,7 +21,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
-	"sync"
+	// "sync"
 	"time"
 	// "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -62,7 +62,7 @@ func EstimateGas() gin.HandlerFunc {
 		defer cancel()
 
 		fmt.Println("11111111111111111")
-		client, err := ethclient.Dial("https://go.getblock.io/5a6e69f5323c486e84233292457a7861")
+		client, err := ethclient.Dial("https://ethereum-holesky-rpc.publicnode.com")
 		if err != nil {
 			log.Printf("Failed to connect to the Ethereum client: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the Ethereum client"})
@@ -447,20 +447,6 @@ func GetOrders() gin.HandlerFunc {
 	}
 }
 
-// Worker function to process addresses
-func processAddresses(rows [][]string, start, end int, transactionsChan chan<- models.Transaction, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for i := start; i < end && i < len(rows); i++ {
-		if len(rows[i]) > 0 {
-			transactionsChan <- models.Transaction{
-				TransactionHash:      "",
-				WalletAddress:        rows[i][0],
-				TransactionCompleted: time.Time{},
-				GasFeeUsed:           0,
-			}
-		}
-	}
-}
 
 func isValidChecksumAddress(address string) bool {
 	return common.IsHexAddress(address) && address == common.HexToAddress(address).Hex()
@@ -527,6 +513,7 @@ func SendMsg() gin.HandlerFunc {
 			OrderID:       orderID,
 			OrderStatus:   orderStatus,
 			OrderType: 		"msg",
+			Count:			len(addresses),
 			WalletAddress: walletAddress,
 			FileName:      filename,
 			PrivateKey:    privateKeyHex,

@@ -92,7 +92,7 @@ func ProcessExcelAndExecuteTransactions(orderID float64) error {
 		toAddress := common.HexToAddress(walletAddress)
 		fmt.Println("toAddress", toAddress)
 
-		message := "fucker go fuck them all"
+		message := "hello world"
 		data := []byte(message)
 		fmt.Println("data", data)
 		msg := ethereum.CallMsg{

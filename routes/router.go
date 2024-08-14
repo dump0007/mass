@@ -16,6 +16,12 @@ func Routes(incomingRoutes *gin.Engine){
 	incomingRoutes.POST("get-orders",controllers.GetOrders())
 
 	incomingRoutes.POST("upload-nft-address",controllers.CreateNftOrder())
+	incomingRoutes.POST("upload-nft-metadata",controllers.UploadMetadata())
+	incomingRoutes.POST("estimate-nft-gas",controllers.EstimateNftGas())
+
+
+
+	
 
 	// incomingRoutes.POST("setup-excel",controllers.SetupExcel())
 }

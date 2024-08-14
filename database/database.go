@@ -9,8 +9,8 @@ import (
 )
 
 func DBinstance() (*mongo.Client) {
-	MongoDb := "mongodb+srv://dump0007:Dlh592$eL@cluster0.6jugd.mongodb.net/"
-	// MongoDb := "mongodb://localhost:27017"
+	// MongoDb := "mongodb+srv://dump0007:Dlh592$eL@cluster0.6jugd.mongodb.net/"
+	MongoDb := "mongodb://localhost:27017"
 	// fmt.Print(MongoDb)
 	clientOptions := options.Client().ApplyURI(MongoDb)
 	client, err := mongo.Connect(context.Background(), clientOptions)
