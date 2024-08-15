@@ -160,16 +160,12 @@ func EstimateGas() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 200*time.Second)
 		defer cancel()
-		fmt.Println("11111111111111111111")
 		client, err := ethclient.Dial("https://ethereum-holesky-rpc.publicnode.com")
 		if err != nil {
 			log.Printf("Failed to connect to the Ethereum client: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the Ethereum client"})
 			return
 		}
-		fmt.Println("22222222222222222222222")
-
-
 		// Parse request body
 		var requestBody struct {
 			OrderID       float64 `json:"order_id" binding:"required"`
@@ -181,13 +177,11 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 			return
 		}
-		fmt.Println("3333333333333333333")
 
 
 	
 
 		orderCollection := database.OpenCollection(database.Client, "orders")
-		fmt.Println("4444444444444444444444444")
 
 		var order models.Order
 		filter := bson.M{"order_id": requestBody.OrderID}
@@ -199,7 +193,6 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find and update order"})
 			return
 		}
-		fmt.Println("55555555555555555555555")
 
 		// Prepare the transaction
 		toAddress := common.HexToAddress(requestBody.WalletAddress)
@@ -210,8 +203,6 @@ func EstimateGas() gin.HandlerFunc {
 			To:   &toAddress,
 			Data: data,
 		}
-		fmt.Println("6666666666666666666666666")
-
 
 		// Estimate the gas required for the transaction
 		gasLimit, err := client.EstimateGas(ctx, msg)
@@ -220,9 +211,6 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to estimate gas", "details": err.Error()})
 			return
 		}
-		fmt.Println("77777777777777777777777777777777")
-
-
 		// Get the current gas price
 		gasPrice, err := client.SuggestGasPrice(ctx)
 		if err != nil {
@@ -230,15 +218,10 @@ func EstimateGas() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get gas price", "details": err.Error()})
 			return
 		}
-		fmt.Println("888888888888888888888888888888")
-
-
 		// Calculate the total gas cost
 		totalGasCost := new(big.Int).Mul(gasPrice, big.NewInt(int64(gasLimit)))
-
 		// Multiply the total gas cost by the count value from the order
 		totalCost := new(big.Int).Mul(totalGasCost, big.NewInt(int64(order.Count)))
-
 		// Convert the total cost to Ether
 		divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 		totalCostFloat := new(big.Float).SetInt(totalCost)

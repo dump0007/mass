@@ -28,9 +28,7 @@ func ProcessExcelAndExecuteTransactions(orderID float64) error {
 	if err != nil {
 		return err
 	}
-	
 
-	// fileName := "modified_Aaddresses.xlsx"
 	fileName := lastOrder.FileName
 	fmt.Println("start")
 	// Open the Excel file
@@ -92,7 +90,7 @@ func ProcessExcelAndExecuteTransactions(orderID float64) error {
 		toAddress := common.HexToAddress(walletAddress)
 		fmt.Println("toAddress", toAddress)
 
-		message := "hello world"
+		message := lastOrder.Message
 		data := []byte(message)
 		fmt.Println("data", data)
 		msg := ethereum.CallMsg{
@@ -130,26 +128,8 @@ func ProcessExcelAndExecuteTransactions(orderID float64) error {
 		}
 
 		fmt.Println("2222222222222222222222222222")
-		// Wait for transaction confirmation
-		// receipt, err := bind.WaitMined(context.Background(), client, signedTx)
-		// if err != nil {
-		// 	return fmt.Errorf("failed to wait for transaction confirmation: %w", err)
-		// }
-
-		// // Ensure the transaction was successful
-		// if receipt.Status != 1 {
-		// 	return fmt.Errorf("transaction failed: %s", signedTx.Hash().Hex())
-		// }
-
-		// Update txn_hash and txn_status in the Excel file
+		
 		txnHash := signedTx.Hash().Hex()
-		// f.SetCellValue("Sheet1", fmt.Sprintf("B%d", i+1), txnHash)    // Update txn_hash
-		// f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i+1), "executed") // Update txn_status to "executed"
-
-		// // Save the updated Excel file after each transaction
-		// if err := f.SaveAs(fileName); err != nil {
-		// 	return fmt.Errorf("failed to save Excel file: %w", err)
-		// }
 
 		fmt.Printf("Transaction sent and confirmed: %s\n", txnHash)
 		nonce = nonce + 1
@@ -157,5 +137,12 @@ func ProcessExcelAndExecuteTransactions(orderID float64) error {
 
 	}
 
+	filter := bson.D{{"order_id", orderID}}
+	update := bson.D{{"$set", bson.D{{"order_status", "completed"}}}}
+	result, err := orderCollection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		fmt.Println("mongo query dropped", err)
+	}
+	fmt.Println(result)
 	return nil
 }
